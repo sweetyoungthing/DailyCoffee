@@ -208,18 +208,6 @@ class _CalendarPageState extends State<CalendarPage> {
         child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: Colors.brown,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: '日历'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: '统计'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: '我的'),
-        ],
-        onTap: (index) {
-          // TODO: 切换页面
-        },
-      ),
     );
   }
 }

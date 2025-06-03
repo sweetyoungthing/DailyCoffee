@@ -44,11 +44,7 @@ class _AddCoffeePageState extends State<AddCoffeePage> {
   @override
   void initState() {
     super.initState();
-    _updatePrice();
-  }
-
-  void _updatePrice() {
-    // 示例：不同品牌/品类/杯型可有不同价格，这里简单写死
+    // 只在初始化时设置默认价格
     int price = 12;
     if (brandIndex == 0) price = 18; // 星巴克
     if (brandIndex == 1) price = 16; // Costa
@@ -94,7 +90,6 @@ class _AddCoffeePageState extends State<AddCoffeePage> {
                 onTap: () {
                   setState(() {
                     brandIndex = i;
-                    _updatePrice();
                   });
                 },
                 child: Container(
@@ -197,9 +192,12 @@ class _AddCoffeePageState extends State<AddCoffeePage> {
                   child: TextField(
                     controller: _priceController,
                     keyboardType: TextInputType.number,
+                    autofocus: true,
                     decoration: const InputDecoration(
                       hintText: '请输入价格',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.brown),
+                      ),
                       isDense: true,
                       contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                     ),
