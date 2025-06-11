@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'calendar_page.dart';
 import 'summary_page.dart';
+import 'my_page.dart';
+import 'bill_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +34,8 @@ class _MainTabPageState extends State<MainTabPage> {
   final List<Widget> _pages = [
     const CalendarPage(),
     const SummaryPage(),
-    Center(child: Text('我的')), // 占位
+    const BillPage(),
+    const MyPage(),
   ];
 
   @override
@@ -42,9 +45,11 @@ class _MainTabPageState extends State<MainTabPage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: Colors.brown,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: '日历'),
           BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: '追踪'),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: '账单'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: '我的'),
         ],
         onTap: (index) {
