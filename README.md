@@ -1,16 +1,66 @@
-# daily_coffee
+# Daily Coffee
 
-A new Flutter project.
+<div align="center">
+  <img src="images/DailyCoffeeLogo.png" alt="Daily Coffee Logo" width="300" />
+</div>
 
-## Getting Started
+<div align="center">
+  <em>"I would rather suffer with coffee than be senseless."</em><br/>
+  — Napoleon Bonaparte
+</div>
+<br/>
+An elegant coffee consumption tracking app that helps you record your daily coffee intake, manage your caffeine consumption, and analyze your spending habits.
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+- 📝 Record daily coffee consumption
+- 📊 Caffeine intake statistics
+- 💰 Expense bill management
+- 📅 Calendar view
+- 📈 Consumption trend analysis
+- 👤 Personalization settings
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🚀 Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Make sure you have the Flutter environment installed
+2. Clone the repository:
+   ```bash
+   git clone https://github.com/sweetyoungthing/DailyCoffee.git
+   ```
+3. Install dependencies:
+   ```bash
+   cd DailyCoffee
+   flutter pub get
+   ```
+4. Run the app:
+   ```bash
+   flutter run
+   ```
+
+## 📱 Usage
+
+1. **Record Coffee**: Tap the "Record" button in the bottom navigation bar, select brand, type, and cup size
+2. **View Statistics**: Check your caffeine intake and consumption trends on the "Statistics" page
+3. **Bill Management**: View monthly consumption records and statistics on the "Bill" page
+4. **Personal Settings**: Set your personal information on the "Profile" page
+
+## 🛠 Tech Stack
+
+- Flutter
+- SQLite
+- SharedPreferences
+- Table Calendar
+- FL Chart
+
+## 📄 License
+
+MIT License
+
+## 🤝 Contribution
+
+Welcome to submit Issues and Pull Requests!
+
+## 📞 Contact
+
+- GitHub: [@sweetyoungthing](https://github.com/sweetyoungthing)
+- E-mail: ben.yutong.song@gamil.com
