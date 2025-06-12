@@ -1,7 +1,7 @@
 # Daily Coffee
 
 <div align="center">
-  <img src="images/DailyCoffeeLogo.png" alt="Daily Coffee Logo" width="300" />
+  <img src="images/DailyCoffeeLogo.png" alt="Daily Coffee Logo" width="600" />
 </div>
 
 <div align="center">
