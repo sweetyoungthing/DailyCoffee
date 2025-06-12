@@ -6,8 +6,12 @@
 
 <div align="center">
 
-![os](images/1749652945623.svg)
-![平台兼容性](https://img.shields.io/badge/platforms-Android%20%7C%20iOS%20%7C%20Windows%20%7C%20macOS%20%7C%20Web-blue)
+  ![Tech Stack](https://img.shields.io/badge/Tech%20Stack-Flutter%20%7C%20SQLite-blue)
+  ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+  ![GitHub repo size](https://img.shields.io/github/repo-size/sweetyoungthing/DailyCoffee)
+  ![Supported Platforms](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS%20%7C%20Windows%20%7C%20macOS%20%7C%20Web-blue)
+  ![GitHub last commit](https://img.shields.io/github/last-commit/sweetyoungthing/DailyCoffee)
+  <img src="images/1749652945623.svg" alt="build: in progress" height="20" />
 
 </div>
 
