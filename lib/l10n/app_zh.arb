@@ -115,5 +115,17 @@
   "noRecords": "暂无消费记录",
   "day": "日",
   "consumptionRecords": "消费记录",
-  "noChange": "与上月持平"
+  "noChange": "与上月持平",
+  
+  "starbucks": "星巴克",
+  "costa": "Costa",
+  "luckin": "瑞幸咖啡",
+  
+  "americano": "美式咖啡",
+  "latte": "拿铁",
+  "cappuccino": "卡布奇诺",
+  
+  "small": "小杯",
+  "medium": "中杯",
+  "large": "大杯"
 } 

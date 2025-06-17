@@ -146,7 +146,7 @@ class _SummaryPageState extends State<SummaryPage> {
               height: 180,
               child:
                   _caffeineTrend.isEmpty
-                      ? const Center(child: Text('暂无数据'))
+                      ? Center(child: Text(l10n.noRecords))
                       : LineChart(
                         LineChartData(
                           gridData: FlGridData(

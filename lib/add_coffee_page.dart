@@ -12,17 +12,9 @@ class AddCoffeePage extends StatefulWidget {
 
 class _AddCoffeePageState extends State<AddCoffeePage> {
   // 品牌、品类、杯型数据
-  final List<Map<String, dynamic>> brands = [
-    {'name': 'Starbucks', 'icon': Icons.local_cafe},
-    {'name': 'Costa', 'icon': Icons.coffee},
-    {'name': 'Luckin', 'icon': Icons.coffee_outlined},
-  ];
-  final List<String> types = ['Americano', 'Latte', 'Cappuccino'];
-  final List<Map<String, dynamic>> sizes = [
-    {'name': 'Small', 'ml': 240},
-    {'name': 'Medium', 'ml': 360},
-    {'name': 'Large', 'ml': 480},
-  ];
+  late List<Map<String, dynamic>> brands;
+  late List<String> types;
+  late List<Map<String, dynamic>> sizes;
 
   int brandIndex = 0;
   int typeIndex = 0;
@@ -32,6 +24,27 @@ class _AddCoffeePageState extends State<AddCoffeePage> {
 
   int get caffeine => _calcCaffeine();
   int get price => int.tryParse(_priceController.text) ?? 0;
+
+  void _initializeData() {
+    final l10n = AppLocalizations.of(context)!;
+
+    // 使用本地化的品牌名称
+    brands = [
+      {'name': l10n.starbucks, 'icon': Icons.local_cafe, 'id': 'starbucks'},
+      {'name': l10n.costa, 'icon': Icons.coffee, 'id': 'costa'},
+      {'name': l10n.luckin, 'icon': Icons.coffee_outlined, 'id': 'luckin'},
+    ];
+
+    // 使用本地化的咖啡品类名称
+    types = [l10n.americano, l10n.latte, l10n.cappuccino];
+
+    // 使用本地化的杯型名称
+    sizes = [
+      {'name': l10n.small, 'ml': 240, 'id': 'small'},
+      {'name': l10n.medium, 'ml': 360, 'id': 'medium'},
+      {'name': l10n.large, 'ml': 480, 'id': 'large'},
+    ];
+  }
 
   int _calcCaffeine() {
     // 简单规则：美式咖啡 95mg/240ml，拿铁/卡布奇诺 80mg/240ml，按比例换算
@@ -45,8 +58,9 @@ class _AddCoffeePageState extends State<AddCoffeePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initializeData();
     // 只在初始化时设置默认价格
     int price = 12;
     if (brandIndex == 0) price = 18; // 星巴克
@@ -57,9 +71,9 @@ class _AddCoffeePageState extends State<AddCoffeePage> {
 
   void _onConfirm() async {
     final record = CoffeeRecord(
-      brand: brands[brandIndex]['name'],
-      type: types[typeIndex],
-      size: sizes[sizeIndex]['name'],
+      brand: brands[brandIndex]['id'],
+      type: ['americano', 'latte', 'cappuccino'][typeIndex],
+      size: ['small', 'medium', 'large'][sizeIndex],
       volume: sizes[sizeIndex]['ml'],
       caffeine: caffeine,
       createdAt: DateTime.now(),
@@ -74,6 +88,7 @@ class _AddCoffeePageState extends State<AddCoffeePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.addCoffee),

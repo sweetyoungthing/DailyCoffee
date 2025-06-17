@@ -115,5 +115,17 @@
   "noRecords": "No consumption records",
   "day": " day",
   "consumptionRecords": "Consumption Records",
-  "noChange": "Same as last month"
+  "noChange": "Same as last month",
+  
+  "starbucks": "Starbucks",
+  "costa": "Costa",
+  "luckin": "Luckin Coffee",
+  
+  "americano": "Americano",
+  "latte": "Latte",
+  "cappuccino": "Cappuccino",
+  
+  "small": "Small",
+  "medium": "Medium",
+  "large": "Large"
 } 

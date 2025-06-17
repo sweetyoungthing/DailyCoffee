@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'utils/coffee_display_helper.dart';
 
 class BillPage extends StatefulWidget {
   const BillPage({Key? key}) : super(key: key);
@@ -277,10 +278,13 @@ class _BillPageState extends State<BillPage> {
                     margin: const EdgeInsets.only(bottom: 16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
-                        BoxShadow(color: Colors.black12, blurRadius: 4),
+                        BoxShadow(
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
+                          blurRadius: 4,
+                        ),
                       ],
                     ),
                     child: Column(
@@ -290,13 +294,18 @@ class _BillPageState extends State<BillPage> {
                           children: [
                             Text(
                               l10n.monthlyConsumption,
-                              style: TextStyle(color: Colors.grey[700]),
+                              style: TextStyle(
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium?.color,
+                              ),
                             ),
                             Text(
                               '${l10n.unitCurrency}$_totalCost',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 20,
-                                color: Colors.brown,
+                                color: Theme.of(context).primaryColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -317,19 +326,24 @@ class _BillPageState extends State<BillPage> {
                     margin: const EdgeInsets.only(bottom: 16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
-                        BoxShadow(color: Colors.black12, blurRadius: 4),
+                        BoxShadow(
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
+                          blurRadius: 4,
+                        ),
                       ],
                     ),
                     child: Column(
                       children: [
                         Text(
                           l10n.brandConsumption,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color:
+                                Theme.of(context).textTheme.titleLarge?.color,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -344,13 +358,15 @@ class _BillPageState extends State<BillPage> {
                                         Icon(
                                           Icons.pie_chart_outline,
                                           size: 64,
-                                          color: Colors.grey.shade400,
+                                          color:
+                                              Theme.of(context).disabledColor,
                                         ),
                                         const SizedBox(height: 16),
                                         Text(
-                                          '',
+                                          l10n.noRecords,
                                           style: TextStyle(
-                                            color: Colors.grey.shade600,
+                                            color:
+                                                Theme.of(context).disabledColor,
                                           ),
                                         ),
                                       ],
@@ -398,7 +414,9 @@ class _BillPageState extends State<BillPage> {
                               horizontal: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.brown.withOpacity(0.1),
+                              color: Theme.of(
+                                context,
+                              ).primaryColor.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child:
@@ -420,9 +438,13 @@ class _BillPageState extends State<BillPage> {
                                           100)
                                       .toStringAsFixed(1);
                                   return Text(
-                                    '${entry.key}: ${l10n.unitCurrency}${entry.value} (${percent}%)',
-                                    style: const TextStyle(
+                                    '${CoffeeDisplayHelper.getBrandName(context, entry.key)}: ${l10n.unitCurrency}${entry.value} (${percent}%)',
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      color:
+                                          Theme.of(
+                                            context,
+                                          ).textTheme.bodyLarge?.color,
                                     ),
                                   );
                                 })(),
@@ -637,19 +659,24 @@ class _BillPageState extends State<BillPage> {
                     margin: const EdgeInsets.only(bottom: 16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
-                        BoxShadow(color: Colors.black12, blurRadius: 4),
+                        BoxShadow(
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
+                          blurRadius: 4,
+                        ),
                       ],
                     ),
                     child: Column(
                       children: [
                         Text(
                           l10n.typeConsumption,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color:
+                                Theme.of(context).textTheme.titleLarge?.color,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -664,13 +691,15 @@ class _BillPageState extends State<BillPage> {
                                         Icon(
                                           Icons.pie_chart_outline,
                                           size: 64,
-                                          color: Colors.grey.shade400,
+                                          color:
+                                              Theme.of(context).disabledColor,
                                         ),
                                         const SizedBox(height: 16),
                                         Text(
-                                          '',
+                                          l10n.noRecords,
                                           style: TextStyle(
-                                            color: Colors.grey.shade600,
+                                            color:
+                                                Theme.of(context).disabledColor,
                                           ),
                                         ),
                                       ],
@@ -718,7 +747,9 @@ class _BillPageState extends State<BillPage> {
                               horizontal: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.brown.withOpacity(0.1),
+                              color: Theme.of(
+                                context,
+                              ).primaryColor.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child:
@@ -740,9 +771,13 @@ class _BillPageState extends State<BillPage> {
                                           100)
                                       .toStringAsFixed(1);
                                   return Text(
-                                    '${entry.key}: ${l10n.unitCurrency}${entry.value} (${percent}%)',
-                                    style: const TextStyle(
+                                    '${CoffeeDisplayHelper.getTypeName(context, entry.key)}: ${l10n.unitCurrency}${entry.value} (${percent}%)',
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      color:
+                                          Theme.of(
+                                            context,
+                                          ).textTheme.bodyLarge?.color,
                                     ),
                                   );
                                 })(),
@@ -765,9 +800,11 @@ class _BillPageState extends State<BillPage> {
                     final r = _records[i];
                     return ListTile(
                       leading: const Icon(Icons.coffee, color: Colors.brown),
-                      title: Text('${r.brand} ${r.type}'),
+                      title: Text(
+                        CoffeeDisplayHelper.getFormattedCoffeeInfo(context, r),
+                      ),
                       subtitle: Text(
-                        '${r.size} ${DateFormat('MM-dd HH:mm').format(r.createdAt)}',
+                        '${CoffeeDisplayHelper.getFormattedSizeInfo(context, r)} ${DateFormat('MM-dd HH:mm').format(r.createdAt)}',
                       ),
                       trailing: Text(
                         '${l10n.unitCurrency}${r.price}',

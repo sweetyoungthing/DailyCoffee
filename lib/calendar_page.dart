@@ -84,7 +84,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 foregroundColor: Colors.white,
               ),
               onPressed: _onAdd,
-              child: const Text('+ 添加'),
+              child: Text('+ ${l10n.addCoffee}'),
             ),
           ),
         ],
