@@ -4,6 +4,7 @@ import 'db/coffee_record.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SummaryPage extends StatefulWidget {
   const SummaryPage({Key? key}) : super(key: key);
@@ -32,7 +33,12 @@ class _SummaryPageState extends State<SummaryPage> {
     final start = DateTime(now.year, now.month, now.day);
     final end = start.add(const Duration(days: 1));
     final all = await CoffeeDB().getRecordsByMonth(now.year, now.month);
-    final today = all.where((r) => r.createdAt.isAfter(start) && r.createdAt.isBefore(end)).toList();
+    final today =
+        all
+            .where(
+              (r) => r.createdAt.isAfter(start) && r.createdAt.isBefore(end),
+            )
+            .toList();
     today.sort((a, b) => a.createdAt.compareTo(b.createdAt));
     setState(() {
       _todayRecords = today;
@@ -60,14 +66,17 @@ class _SummaryPageState extends State<SummaryPage> {
       }
       // 加上本时刻新摄入
       while (recordIdx < _todayRecords.length &&
-          _todayRecords[recordIdx].createdAt.isBefore(t.add(const Duration(minutes: 1)))) {
+          _todayRecords[recordIdx].createdAt.isBefore(
+            t.add(const Duration(minutes: 1)),
+          )) {
         lastCaffeine += _todayRecords[recordIdx].caffeine;
         recordIdx++;
       }
       points.add(FlSpot(h.toDouble(), lastCaffeine));
       labels.add(DateFormat('HH:mm').format(t));
       // 记录当前时刻的咖啡因含量
-      if (now.isBefore(t.add(const Duration(hours: 1))) && currentCaffeine == 0) {
+      if (now.isBefore(t.add(const Duration(hours: 1))) &&
+          currentCaffeine == 0) {
         currentCaffeine = lastCaffeine;
       }
     }
@@ -85,103 +94,155 @@ class _SummaryPageState extends State<SummaryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final displayCaffeine = (_touchedIndex != null && _touchedIndex! < _caffeineTrend.length)
-        ? _caffeineTrend[_touchedIndex!].y.round()
-        : _currentCaffeine;
+    final l10n = AppLocalizations.of(context)!;
+    final displayCaffeine =
+        (_touchedIndex != null && _touchedIndex! < _caffeineTrend.length)
+            ? _caffeineTrend[_touchedIndex!].y.round()
+            : _currentCaffeine;
     return Scaffold(
-      appBar: AppBar(title: const Text('咖啡因追踪')),
+      appBar: AppBar(title: Text(l10n.track)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: _StatCard(title: '', value: '$displayCaffeine mg', sub: '当前咖啡因')),
+              Expanded(
+                child: _StatCard(
+                  title: '',
+                  value: '$displayCaffeine ${l10n.unitMg}',
+                  sub: l10n.currentCaffeine,
+                ),
+              ),
               const SizedBox(width: 12),
-              Expanded(child: _StatCard(title: '$_totalCups 杯', value: '', sub: '今日杯数')),
+              Expanded(
+                child: _StatCard(
+                  title: '$_totalCups',
+                  value: '',
+                  sub: l10n.todayCups,
+                ),
+              ),
               const SizedBox(width: 12),
-              Expanded(child: _StatCard(title: '$_totalCaffeine mg', value: '', sub: '总摄入量')),
+              Expanded(
+                child: _StatCard(
+                  title: '$_totalCaffeine ${l10n.unitMg}',
+                  value: '',
+                  sub: l10n.totalIntake,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 24),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 24.0),
-            child: Text('咖啡因代谢趋势', style: TextStyle(fontWeight: FontWeight.bold)),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 24.0),
+            child: Text(
+              l10n.caffeineTrend,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: SizedBox(
               height: 180,
-              child: _caffeineTrend.isEmpty
-                  ? const Center(child: Text('暂无数据'))
-                  : LineChart(
-                      LineChartData(
-                        gridData: FlGridData(show: true, drawVerticalLine: false),
-                        titlesData: FlTitlesData(
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+              child:
+                  _caffeineTrend.isEmpty
+                      ? const Center(child: Text('暂无数据'))
+                      : LineChart(
+                        LineChartData(
+                          gridData: FlGridData(
+                            show: true,
+                            drawVerticalLine: false,
                           ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              interval: 1,
-                              getTitlesWidget: (value, meta) {
-                                if (value % 1 == 0 && value >= 0 && value < _trendLabels.length) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 4),
-                                    child: Text(_trendLabels[value.toInt()], style: const TextStyle(fontSize: 10)),
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              },
+                          titlesData: FlTitlesData(
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 40,
+                              ),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                interval: 1,
+                                getTitlesWidget: (value, meta) {
+                                  if (value % 1 == 0 &&
+                                      value >= 0 &&
+                                      value < _trendLabels.length) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: Text(
+                                        _trendLabels[value.toInt()],
+                                        style: const TextStyle(fontSize: 10),
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                            ),
+                            rightTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            topTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
                             ),
                           ),
-                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        ),
-                        borderData: FlBorderData(show: false),
-                        minX: 0,
-                        maxX: 16,
-                        minY: 0,
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: _caffeineTrend,
-                            isCurved: true,
-                            color: Colors.deepPurple,
-                            barWidth: 3,
-                            dotData: FlDotData(show: true),
-                            belowBarData: BarAreaData(show: true, color: Colors.deepPurple.withOpacity(0.1)),
-                          ),
-                        ],
-                        lineTouchData: LineTouchData(
-                          touchTooltipData: LineTouchTooltipData(
-                            getTooltipItems: (touchedSpots) {
-                              return touchedSpots.map((LineBarSpot touchedSpot) {
-                                return LineTooltipItem(
-                                  '${touchedSpot.y.toStringAsFixed(1)} mg',
-                                  const TextStyle(color: Colors.white),
-                                );
-                              }).toList();
+                          borderData: FlBorderData(show: false),
+                          minX: 0,
+                          maxX: 16,
+                          minY: 0,
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: _caffeineTrend,
+                              isCurved: true,
+                              color: Colors.deepPurple,
+                              barWidth: 3,
+                              dotData: FlDotData(show: true),
+                              belowBarData: BarAreaData(
+                                show: true,
+                                color: Colors.deepPurple.withOpacity(0.1),
+                              ),
+                            ),
+                          ],
+                          lineTouchData: LineTouchData(
+                            touchTooltipData: LineTouchTooltipData(
+                              getTooltipItems: (touchedSpots) {
+                                return touchedSpots.map((
+                                  LineBarSpot touchedSpot,
+                                ) {
+                                  return LineTooltipItem(
+                                    '${touchedSpot.y.toStringAsFixed(1)} mg',
+                                    const TextStyle(color: Colors.white),
+                                  );
+                                }).toList();
+                              },
+                            ),
+                            touchCallback: (event, response) {
+                              if (event is FlTapUpEvent ||
+                                  event is FlLongPressEnd ||
+                                  event is FlPanEndEvent) {
+                                setState(() {
+                                  _touchedIndex = null;
+                                });
+                              } else if (response != null &&
+                                  response.lineBarSpots != null &&
+                                  response.lineBarSpots!.isNotEmpty) {
+                                setState(() {
+                                  _touchedIndex =
+                                      response.lineBarSpots!.first.x.toInt();
+                                });
+                              }
                             },
                           ),
-                          touchCallback: (event, response) {
-                            if (event is FlTapUpEvent || event is FlLongPressEnd || event is FlPanEndEvent) {
-                              setState(() {
-                                _touchedIndex = null;
-                              });
-                            } else if (response != null && response.lineBarSpots != null && response.lineBarSpots!.isNotEmpty) {
-                              setState(() {
-                                _touchedIndex = response.lineBarSpots!.first.x.toInt();
-                              });
-                            }
-                          },
                         ),
                       ),
-                    ),
             ),
           ),
           const SizedBox(height: 24),
-          const Text('今日记录', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            l10n.todayRecords,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           ..._todayRecords.map((r) => _CoffeeRecordCard(record: r)).toList(),
         ],
       ),
@@ -193,7 +254,11 @@ class _StatCard extends StatelessWidget {
   final String title;
   final String value;
   final String sub;
-  const _StatCard({required this.title, required this.value, required this.sub});
+  const _StatCard({
+    required this.title,
+    required this.value,
+    required this.sub,
+  });
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -204,9 +269,21 @@ class _StatCard extends StatelessWidget {
         child: Column(
           children: [
             if (title.isNotEmpty)
-              Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             if (value.isNotEmpty)
-              Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             const SizedBox(height: 4),
             Text(sub, style: const TextStyle(fontSize: 12, color: Colors.grey)),
           ],
@@ -226,8 +303,10 @@ class _CoffeeRecordCard extends StatelessWidget {
       child: ListTile(
         leading: const Icon(Icons.coffee, color: Colors.brown, size: 32),
         title: Text(record.type),
-        subtitle: Text('${DateFormat('HH:mm').format(record.createdAt)} · ${record.caffeine}mg'),
+        subtitle: Text(
+          '${DateFormat('HH:mm').format(record.createdAt)} · ${record.caffeine}mg',
+        ),
       ),
     );
   }
-} 
+}

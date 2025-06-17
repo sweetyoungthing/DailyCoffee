@@ -4,6 +4,7 @@ import 'db/coffee_db.dart';
 import 'db/coffee_record.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({Key? key}) : super(key: key);
@@ -26,10 +27,17 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   Future<void> _loadRecords() async {
-    final records = await CoffeeDB().getRecordsByMonth(_selectedMonth.year, _selectedMonth.month);
+    final records = await CoffeeDB().getRecordsByMonth(
+      _selectedMonth.year,
+      _selectedMonth.month,
+    );
     final events = <DateTime, List<CoffeeRecord>>{};
     for (var r in records) {
-      final day = DateTime(r.createdAt.year, r.createdAt.month, r.createdAt.day);
+      final day = DateTime(
+        r.createdAt.year,
+        r.createdAt.month,
+        r.createdAt.day,
+      );
       events.putIfAbsent(day, () => []).add(r);
     }
     setState(() {
@@ -59,9 +67,10 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(DateFormat('yyyy年M月').format(_selectedMonth)),
+        title: Text(l10n.calendar),
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined),
@@ -70,7 +79,10 @@ class _CalendarPageState extends State<CalendarPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.brown, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.brown,
+                foregroundColor: Colors.white,
+              ),
               onPressed: _onAdd,
               child: const Text('+ 添加'),
             ),
@@ -93,7 +105,8 @@ class _CalendarPageState extends State<CalendarPage> {
             },
             calendarBuilders: CalendarBuilders(
               defaultBuilder: (context, day, focusedDay) {
-                final events = _events[DateTime(day.year, day.month, day.day)] ?? [];
+                final events =
+                    _events[DateTime(day.year, day.month, day.day)] ?? [];
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
@@ -106,9 +119,19 @@ class _CalendarPageState extends State<CalendarPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.coffee, size: 12, color: Colors.brown),
+                            const Icon(
+                              Icons.coffee,
+                              size: 12,
+                              color: Colors.brown,
+                            ),
                             if (events.length > 1)
-                              Text('×${events.length}', style: const TextStyle(color: Colors.brown, fontSize: 10)),
+                              Text(
+                                '×${events.length}',
+                                style: const TextStyle(
+                                  color: Colors.brown,
+                                  fontSize: 10,
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -116,7 +139,8 @@ class _CalendarPageState extends State<CalendarPage> {
                 );
               },
               todayBuilder: (context, day, focusedDay) {
-                final events = _events[DateTime(day.year, day.month, day.day)] ?? [];
+                final events =
+                    _events[DateTime(day.year, day.month, day.day)] ?? [];
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
@@ -127,7 +151,13 @@ class _CalendarPageState extends State<CalendarPage> {
                         shape: BoxShape.circle,
                       ),
                       padding: const EdgeInsets.all(4),
-                      child: Text('${day.day}', style: const TextStyle(color: Colors.white, fontSize: 14)),
+                      child: Text(
+                        '${day.day}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
                     if (events.isNotEmpty)
                       Padding(
@@ -136,9 +166,19 @@ class _CalendarPageState extends State<CalendarPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.coffee, size: 12, color: Colors.brown),
+                            const Icon(
+                              Icons.coffee,
+                              size: 12,
+                              color: Colors.brown,
+                            ),
                             if (events.length > 1)
-                              Text('×${events.length}', style: const TextStyle(color: Colors.brown, fontSize: 10)),
+                              Text(
+                                '×${events.length}',
+                                style: const TextStyle(
+                                  color: Colors.brown,
+                                  fontSize: 10,
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -146,7 +186,8 @@ class _CalendarPageState extends State<CalendarPage> {
                 );
               },
               selectedBuilder: (context, day, focusedDay) {
-                final events = _events[DateTime(day.year, day.month, day.day)] ?? [];
+                final events =
+                    _events[DateTime(day.year, day.month, day.day)] ?? [];
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
@@ -157,7 +198,13 @@ class _CalendarPageState extends State<CalendarPage> {
                         shape: BoxShape.circle,
                       ),
                       padding: const EdgeInsets.all(4),
-                      child: Text('${day.day}', style: const TextStyle(color: Colors.white, fontSize: 14)),
+                      child: Text(
+                        '${day.day}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
                     if (events.isNotEmpty)
                       Padding(
@@ -166,9 +213,19 @@ class _CalendarPageState extends State<CalendarPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.coffee, size: 12, color: Colors.brown),
+                            const Icon(
+                              Icons.coffee,
+                              size: 12,
+                              color: Colors.brown,
+                            ),
                             if (events.length > 1)
-                              Text('×${events.length}', style: const TextStyle(color: Colors.brown, fontSize: 10)),
+                              Text(
+                                '×${events.length}',
+                                style: const TextStyle(
+                                  color: Colors.brown,
+                                  fontSize: 10,
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -178,8 +235,14 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
             onPageChanged: _onMonthChanged,
             calendarStyle: const CalendarStyle(
-              todayDecoration: BoxDecoration(color: Colors.brown, shape: BoxShape.circle),
-              selectedDecoration: BoxDecoration(color: Colors.brown, shape: BoxShape.circle),
+              todayDecoration: BoxDecoration(
+                color: Colors.brown,
+                shape: BoxShape.circle,
+              ),
+              selectedDecoration: BoxDecoration(
+                color: Colors.brown,
+                shape: BoxShape.circle,
+              ),
               markerDecoration: BoxDecoration(color: Colors.transparent),
             ),
           ),
@@ -194,9 +257,18 @@ class _CalendarPageState extends State<CalendarPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _StatItem(label: '总消费', value: '¥$_totalCost'),
-                _StatItem(label: '消费天数', value: '$_totalDays天'),
-                _StatItem(label: '咖啡总数', value: '$_totalCups杯'),
+                _StatItem(
+                  label: l10n.totalCost,
+                  value: '${l10n.unitCurrency}$_totalCost',
+                ),
+                _StatItem(
+                  label: l10n.consumptionDays,
+                  value: '${_totalDays}${l10n.unitDay}',
+                ),
+                _StatItem(
+                  label: l10n.totalCups,
+                  value: '${_totalCups}${l10n.unitCup}',
+                ),
               ],
             ),
           ),
@@ -220,10 +292,17 @@ class _StatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(value, style: const TextStyle(fontSize: 20, color: Colors.brown, fontWeight: FontWeight.bold)),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 20,
+            color: Colors.brown,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 4),
         Text(label, style: const TextStyle(color: Colors.grey)),
       ],
     );
   }
-} 
+}

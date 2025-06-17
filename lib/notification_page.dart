@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({Key? key}) : super(key: key);
+  const NotificationPage({super.key});
 
   @override
   State<NotificationPage> createState() => _NotificationPageState();
 }
 
 class _NotificationPageState extends State<NotificationPage> {
-  bool _dailyReminder = true;
-  bool _weeklyReport = true;
-  bool _caffeineAlert = true;
-  bool _budgetAlert = true;
-  TimeOfDay _reminderTime = const TimeOfDay(hour: 9, minute: 0);
+  bool _enableNotifications = false;
+  bool _dailyReminder = false;
+  bool _weeklyReport = false;
+  bool _caffeineAlert = false;
+  bool _budgetAlert = false;
+  TimeOfDay _reminderTime = const TimeOfDay(hour: 20, minute: 0);
 
   @override
   void initState() {
@@ -24,12 +26,13 @@ class _NotificationPageState extends State<NotificationPage> {
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _dailyReminder = prefs.getBool('dailyReminder') ?? true;
-      _weeklyReport = prefs.getBool('weeklyReport') ?? true;
-      _caffeineAlert = prefs.getBool('caffeineAlert') ?? true;
-      _budgetAlert = prefs.getBool('budgetAlert') ?? true;
+      _enableNotifications = prefs.getBool('enableNotifications') ?? false;
+      _dailyReminder = prefs.getBool('dailyReminder') ?? false;
+      _weeklyReport = prefs.getBool('weeklyReport') ?? false;
+      _caffeineAlert = prefs.getBool('caffeineAlert') ?? false;
+      _budgetAlert = prefs.getBool('budgetAlert') ?? false;
 
-      final hour = prefs.getInt('reminderTimeHour') ?? 9;
+      final hour = prefs.getInt('reminderTimeHour') ?? 20;
       final minute = prefs.getInt('reminderTimeMinute') ?? 0;
       _reminderTime = TimeOfDay(hour: hour, minute: minute);
     });
@@ -37,6 +40,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   Future<void> _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('enableNotifications', _enableNotifications);
     await prefs.setBool('dailyReminder', _dailyReminder);
     await prefs.setBool('weeklyReport', _weeklyReport);
     await prefs.setBool('caffeineAlert', _caffeineAlert);
@@ -45,87 +49,116 @@ class _NotificationPageState extends State<NotificationPage> {
     await prefs.setInt('reminderTimeMinute', _reminderTime.minute);
   }
 
-  Future<void> _selectReminderTime() async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: _reminderTime,
-    );
-
-    if (picked != null && picked != _reminderTime) {
-      setState(() {
-        _reminderTime = picked;
-      });
-      await _saveSettings();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('通知设置')),
+      appBar: AppBar(title: Text(l10n.notificationSettings)),
       body: ListView(
         children: [
-          ListTile(
-            title: const Text('每日提醒时间'),
-            subtitle: Text('每天 ${_reminderTime.format(context)}'),
-            trailing: const Icon(Icons.access_time),
-            onTap: _selectReminderTime,
+          // 主开关
+          SwitchListTile(
+            title: Text(l10n.enableNotifications),
+            value: _enableNotifications,
+            onChanged: (bool value) {
+              setState(() {
+                _enableNotifications = value;
+                if (!value) {
+                  _dailyReminder = false;
+                  _weeklyReport = false;
+                  _caffeineAlert = false;
+                  _budgetAlert = false;
+                }
+              });
+              _saveSettings();
+            },
           ),
+
           const Divider(),
 
+          // 每日提醒
           SwitchListTile(
-            title: const Text('每日记录提醒'),
-            subtitle: const Text('提醒你记录当天的咖啡消费'),
-            value: _dailyReminder,
-            onChanged: (value) {
-              setState(() {
-                _dailyReminder = value;
-              });
-              _saveSettings();
-            },
+            title: Text(l10n.dailyReminder),
+            subtitle: Text(l10n.dailyReminderDesc),
+            value: _dailyReminder && _enableNotifications,
+            onChanged:
+                _enableNotifications
+                    ? (bool value) {
+                      setState(() {
+                        _dailyReminder = value;
+                      });
+                    }
+                    : null,
+          ),
+          if (_dailyReminder && _enableNotifications)
+            ListTile(
+              title: Text(l10n.dailyReminderTime),
+              trailing: Text(_reminderTime.format(context)),
+              onTap: () async {
+                final TimeOfDay? newTime = await showTimePicker(
+                  context: context,
+                  initialTime: _reminderTime,
+                );
+                if (newTime != null) {
+                  setState(() {
+                    _reminderTime = newTime;
+                  });
+                  await _saveSettings();
+                }
+              },
+            ),
+
+          // 周报告
+          SwitchListTile(
+            title: Text(l10n.weeklyReport),
+            subtitle: Text(l10n.weeklyReportDesc),
+            value: _weeklyReport && _enableNotifications,
+            onChanged:
+                _enableNotifications
+                    ? (bool value) {
+                      setState(() {
+                        _weeklyReport = value;
+                      });
+                    }
+                    : null,
           ),
 
+          // 咖啡因提醒
           SwitchListTile(
-            title: const Text('周报告'),
-            subtitle: const Text('每周发送消费统计和分析'),
-            value: _weeklyReport,
-            onChanged: (value) {
-              setState(() {
-                _weeklyReport = value;
-              });
-              _saveSettings();
-            },
+            title: Text(l10n.caffeineAlert),
+            subtitle: Text(l10n.caffeineAlertDesc),
+            value: _caffeineAlert && _enableNotifications,
+            onChanged:
+                _enableNotifications
+                    ? (bool value) {
+                      setState(() {
+                        _caffeineAlert = value;
+                      });
+                    }
+                    : null,
           ),
 
+          // 预算提醒
           SwitchListTile(
-            title: const Text('咖啡因超额提醒'),
-            subtitle: const Text('当接近每日咖啡因限制时提醒你'),
-            value: _caffeineAlert,
-            onChanged: (value) {
-              setState(() {
-                _caffeineAlert = value;
-              });
-              _saveSettings();
-            },
+            title: Text(l10n.budgetAlert),
+            subtitle: Text(l10n.budgetAlertDesc),
+            value: _budgetAlert && _enableNotifications,
+            onChanged:
+                _enableNotifications
+                    ? (bool value) {
+                      setState(() {
+                        _budgetAlert = value;
+                      });
+                    }
+                    : null,
           ),
 
-          SwitchListTile(
-            title: const Text('预算提醒'),
-            subtitle: const Text('当接近月度预算限制时提醒你'),
-            value: _budgetAlert,
-            onChanged: (value) {
-              setState(() {
-                _budgetAlert = value;
-              });
-              _saveSettings();
-            },
-          ),
-
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Text(
-              '注意：通知功能需要在系统设置中允许应用发送通知',
-              style: TextStyle(color: Colors.grey),
+              l10n.notificationPermissionNote,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
         ],

@@ -1,0 +1,115 @@
+{
+  "@@locale": "en",
+  
+  "appName": "Daily Coffee",
+  "calendar": "Calendar",
+  "track": "Track",
+  "bills": "Bills",
+  "mine": "Mine",
+  
+  "settings": "Settings",
+  "display": "Display",
+  "darkMode": "Dark Mode",
+  "darkModeEnabled": "Enabled",
+  "darkModeDisabled": "Disabled",
+  "language": "Language",
+  "simplified_chinese": "Simplified Chinese",
+  "english": "English",
+  
+  "notifications": "Notifications",
+  "enableNotifications": "Enable Notifications",
+  "notificationSettings": "Notification Settings",
+  "dailyReminder": "Daily Reminder",
+  "dailyReminderTime": "Daily Reminder Time",
+  "dailyReminderDesc": "Remind you to record your coffee consumption",
+  "weeklyReport": "Weekly Report",
+  "weeklyReportDesc": "Send weekly consumption statistics and analysis",
+  "caffeineAlert": "Caffeine Alert",
+  "caffeineAlertDesc": "Alert when approaching daily caffeine limit",
+  "budgetAlert": "Budget Alert",
+  "budgetAlertDesc": "Alert when approaching monthly budget limit",
+  "notificationPermissionNote": "Note: Notifications require system permission",
+  
+  "personalization": "Personalization",
+  "caffeineDailyLimit": "Daily Caffeine Limit",
+  "monthlyBudget": "Monthly Budget",
+  "enterCaffeineLimit": "Enter limit value (mg)",
+  "enterBudgetAmount": "Enter budget amount",
+  
+  "dataManagement": "Data Management",
+  "backupData": "Backup Data",
+  "restoreData": "Restore Data",
+  "backupInProgress": "Backup in progress...",
+  "restoreInProgress": "Restore in progress...",
+  
+  "about": "About",
+  "aboutDailyCoffee": "About Daily Coffee",
+  "version": "Version",
+  "slogan": "Record your every cup of coffee",
+  "copyright": "© 2024 Daily Coffee. All rights reserved.",
+  
+  "cancel": "Cancel",
+  "save": "Save",
+  "edit": "Edit",
+  "nickname": "Nickname",
+  "enterNickname": "Enter nickname",
+  "nicknameNotSet": "Nickname not set",
+  "avatarNotImplemented": "Avatar selection not implemented yet",
+  
+  "unitMg": "mg",
+  "unitCurrency": "$",
+  "unitDay": " days",
+  "unitCup": " cups",
+
+  "currentCaffeine": "Current Caffeine",
+  "todayCups": "Today's Cups",
+  "totalIntake": "Total Intake",
+  "caffeineTrend": "Caffeine Metabolism Trend",
+  "todayRecords": "Today's Records",
+
+  "addCoffee": "Add Coffee",
+  "selectBrand": "Select Brand",
+  "selectType": "Select Type",
+  "selectSize": "Select Size",
+  "estimatedCaffeine": "Estimated Caffeine",
+  "equivalentToAmericano": "Equivalent to a standard Americano",
+  "price": "Price",
+  "enterPrice": "Enter price",
+  "confirm": "Confirm",
+
+  "totalCost": "Total Cost",
+  "consumptionDays": "Consumption Days",
+  "totalCups": "Total Cups",
+
+  "selectMonth": "Select Month",
+  "month": "Month",
+  "brand": "Brand",
+  "type": "Type",
+  "size": "Size",
+  "caffeine": "Caffeine",
+  "time": "Time",
+  "exportSuccess": "Exported to: {path}",
+  "@exportSuccess": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyConsumption": "Monthly Consumption",
+  "comparedToLastMonth": "{amount} {isIncrease, select, true{more} false{less} other{different}} than last month",
+  "@comparedToLastMonth": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      },
+      "isIncrease": {
+        "type": "String"
+      }
+    }
+  },
+  "noLastMonthData": "No data from last month",
+  "brandConsumption": "Brand Consumption",
+  "typeConsumption": "Type Consumption",
+  "dailyTrend": "Daily Trend"
+} 

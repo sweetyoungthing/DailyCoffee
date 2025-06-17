@@ -1,0 +1,115 @@
+{
+  "@@locale": "zh",
+  
+  "appName": "Daily Coffee",
+  "calendar": "日历",
+  "track": "追踪",
+  "bills": "账单",
+  "mine": "我的",
+  
+  "settings": "设置",
+  "display": "显示",
+  "darkMode": "深色模式",
+  "darkModeEnabled": "已开启",
+  "darkModeDisabled": "已关闭",
+  "language": "语言",
+  "simplified_chinese": "简体中文",
+  "english": "English",
+  
+  "notifications": "通知",
+  "enableNotifications": "启用通知",
+  "notificationSettings": "通知设置",
+  "dailyReminder": "每日提醒",
+  "dailyReminderTime": "每日提醒时间",
+  "dailyReminderDesc": "提醒你记录当天的咖啡消费",
+  "weeklyReport": "周报告",
+  "weeklyReportDesc": "每周发送消费统计和分析",
+  "caffeineAlert": "咖啡因超额提醒",
+  "caffeineAlertDesc": "当接近每日咖啡因限制时提醒你",
+  "budgetAlert": "预算提醒",
+  "budgetAlertDesc": "当接近月度预算限制时提醒你",
+  "notificationPermissionNote": "注意：通知功能需要在系统设置中允许应用发送通知",
+  
+  "personalization": "个性化",
+  "caffeineDailyLimit": "咖啡因每日限制",
+  "monthlyBudget": "每月预算",
+  "enterCaffeineLimit": "请输入限制值（mg）",
+  "enterBudgetAmount": "请输入预算金额",
+  
+  "dataManagement": "数据管理",
+  "backupData": "备份数据",
+  "restoreData": "恢复数据",
+  "backupInProgress": "数据备份功能开发中...",
+  "restoreInProgress": "数据恢复功能开发中...",
+  
+  "about": "关于",
+  "aboutDailyCoffee": "关于 Daily Coffee",
+  "version": "版本",
+  "slogan": "记录你的每一杯咖啡",
+  "copyright": "© 2024 Daily Coffee. 保留所有权利。",
+  
+  "cancel": "取消",
+  "save": "保存",
+  "edit": "编辑",
+  "nickname": "昵称",
+  "enterNickname": "请输入昵称",
+  "nicknameNotSet": "未设置昵称",
+  "avatarNotImplemented": "头像选择功能待实现",
+  
+  "unitMg": "mg",
+  "unitCurrency": "¥",
+  "unitDay": "天",
+  "unitCup": "杯",
+
+  "currentCaffeine": "当前咖啡因",
+  "todayCups": "今日杯数",
+  "totalIntake": "总摄入量",
+  "caffeineTrend": "咖啡因代谢趋势",
+  "todayRecords": "今日记录",
+
+  "addCoffee": "添加咖啡",
+  "selectBrand": "选择品牌",
+  "selectType": "咖啡品类",
+  "selectSize": "杯型",
+  "estimatedCaffeine": "预估咖啡因含量",
+  "equivalentToAmericano": "相当于一杯标准美式咖啡",
+  "price": "价格",
+  "enterPrice": "请输入价格",
+  "confirm": "确认添加",
+
+  "totalCost": "总消费",
+  "consumptionDays": "消费天数",
+  "totalCups": "咖啡总数",
+
+  "selectMonth": "选择月份",
+  "month": "月份",
+  "brand": "品牌",
+  "type": "品类",
+  "size": "杯型",
+  "caffeine": "咖啡因",
+  "time": "时间",
+  "exportSuccess": "已导出到: {path}",
+  "@exportSuccess": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyConsumption": "本月消费",
+  "comparedToLastMonth": "比上月{isIncrease, select, true{增加} false{减少} other{变化}}{amount}元",
+  "@comparedToLastMonth": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      },
+      "isIncrease": {
+        "type": "String"
+      }
+    }
+  },
+  "noLastMonthData": "暂无上月数据",
+  "brandConsumption": "品牌消费占比",
+  "typeConsumption": "品类消费占比",
+  "dailyTrend": "每日消费趋势"
+} 

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BillPage extends StatefulWidget {
   const BillPage({Key? key}) : super(key: key);
@@ -118,11 +119,10 @@ class _BillPageState extends State<BillPage> {
   }
 
   // 获取咖啡品类占比数据
-  List<PieChartSectionData> _getTypesSections() {
+  List<PieChartSectionData> _getTypeSections() {
     final sortedTypes =
         _typeStats.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
 
-    // 如果没有数据，返回一个默认的灰色部分
     if (sortedTypes.isEmpty) {
       return [
         PieChartSectionData(
@@ -140,11 +140,11 @@ class _BillPageState extends State<BillPage> {
     }
 
     final colors = [
+      const Color(0xFF795548), // 深棕色
       const Color(0xFFA1887F), // 浅棕色
       const Color(0xFF8D6E63), // 中棕色
-      const Color(0xFF6D4C41), // 深棕色
-      const Color(0xFF5D4037), // 更深棕色
-      const Color(0xFF4E342E), // 最深棕色
+      const Color(0xFF6D4C41), // 暗棕色
+      const Color(0xFF5D4037), // 深暗棕色
     ];
 
     int i = 0;
@@ -190,14 +190,15 @@ class _BillPageState extends State<BillPage> {
   }
 
   Future<void> _pickMonth() async {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedMonth,
       firstDate: DateTime(now.year - 3, 1),
       lastDate: DateTime(now.year + 1, 12),
-      helpText: '选择月份',
-      fieldLabelText: '月份',
+      helpText: l10n.selectMonth,
+      fieldLabelText: l10n.month,
       fieldHintText: 'yyyy-MM',
       initialEntryMode: DatePickerEntryMode.calendarOnly,
       selectableDayPredicate: (date) => date.day == 1,
@@ -211,11 +212,14 @@ class _BillPageState extends State<BillPage> {
   }
 
   Future<void> _exportCSV() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       _exporting = true;
     });
     final buffer = StringBuffer();
-    buffer.writeln('品牌,品类,杯型,价格,咖啡因,时间');
+    buffer.writeln(
+      '${l10n.brand},${l10n.type},${l10n.size},${l10n.price},${l10n.caffeine},${l10n.time}',
+    );
     for (final r in _records) {
       buffer.writeln(
         '${r.brand},${r.type},${r.size},${r.price},${r.caffeine},${DateFormat('yyyy-MM-dd HH:mm').format(r.createdAt)}',
@@ -232,19 +236,19 @@ class _BillPageState extends State<BillPage> {
     if (mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('已导出到: ${file.path}')));
+      ).showSnackBar(SnackBar(content: Text(l10n.exportSuccess(file.path))));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${_selectedMonth.year}年${_selectedMonth.month}月账单'),
+        title: Text(l10n.bills),
         actions: [
           IconButton(
-            icon: const Icon(Icons.date_range),
-            tooltip: '选择月份',
+            icon: const Icon(Icons.calendar_month),
             onPressed: _pickMonth,
           ),
           IconButton(
@@ -253,10 +257,12 @@ class _BillPageState extends State<BillPage> {
                     ? const SizedBox(
                       width: 24,
                       height: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                     : const Icon(Icons.download),
-            tooltip: '导出CSV',
             onPressed: _exporting ? null : _exportCSV,
           ),
         ],
@@ -698,14 +704,14 @@ class _BillPageState extends State<BillPage> {
                                           borderData: FlBorderData(show: false),
                                           sectionsSpace: 2,
                                           centerSpaceRadius: 40,
-                                          sections: _getTypesSections(),
+                                          sections: _getTypeSections(),
                                         ),
                                       ),
                                     ),
                           ),
                         ),
                         if (_touchedIndex != -1 &&
-                            _getTypesSections().length > _touchedIndex) ...[
+                            _getTypeSections().length > _touchedIndex) ...[
                           Container(
                             padding: const EdgeInsets.symmetric(
                               vertical: 4,
@@ -717,7 +723,7 @@ class _BillPageState extends State<BillPage> {
                             ),
                             child:
                                 (() {
-                                  final sections = _getTypesSections();
+                                  final sections = _getTypeSections();
                                   if (_touchedIndex < 0 ||
                                       _touchedIndex >= sections.length)
                                     return const Text('');
@@ -775,23 +781,26 @@ class _BillPageState extends State<BillPage> {
   }
 
   Widget _buildCompareWidget() {
+    final l10n = AppLocalizations.of(context)!;
     final diff = _totalCost - _lastMonthCost;
-    final percent = _lastMonthCost == 0 ? null : (diff / _lastMonthCost * 100);
-    String text;
-    Color color;
     if (_lastMonthCost == 0) {
-      text = '无上月数据';
-      color = Colors.grey;
+      return Text(
+        l10n.noLastMonthData,
+        style: const TextStyle(color: Colors.grey, fontSize: 14),
+      );
     } else if (diff == 0) {
-      text = '与上月持平';
-      color = Colors.grey;
-    } else if (diff > 0) {
-      text = '比上月多支出 ¥$diff (${percent!.toStringAsFixed(1)}%)';
-      color = Colors.red;
+      return Text(
+        l10n.noLastMonthData, // 使用无变化文本
+        style: const TextStyle(color: Colors.grey, fontSize: 14),
+      );
     } else {
-      text = '比上月少支出 ¥${-diff} (${percent!.abs().toStringAsFixed(1)}%)';
-      color = Colors.green;
+      return Text(
+        l10n.comparedToLastMonth(diff.abs(), diff > 0 ? 'true' : 'false'),
+        style: TextStyle(
+          color: diff > 0 ? Colors.red : Colors.green,
+          fontSize: 14,
+        ),
+      );
     }
-    return Text(text, style: TextStyle(color: color, fontSize: 14));
   }
 }
