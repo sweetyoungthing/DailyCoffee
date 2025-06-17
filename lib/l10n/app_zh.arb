@@ -111,5 +111,9 @@
   "noLastMonthData": "暂无上月数据",
   "brandConsumption": "品牌消费占比",
   "typeConsumption": "品类消费占比",
-  "dailyTrend": "每日消费趋势"
+  "dailyTrend": "每日消费趋势",
+  "noRecords": "暂无消费记录",
+  "day": "日",
+  "consumptionRecords": "消费记录",
+  "noChange": "与上月持平"
 } 

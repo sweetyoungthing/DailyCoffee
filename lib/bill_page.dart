@@ -269,7 +269,7 @@ class _BillPageState extends State<BillPage> {
       ),
       body:
           _records.isEmpty
-              ? const Center(child: Text('暂无消费记录'))
+              ? Center(child: Text(l10n.noRecords))
               : ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
@@ -289,11 +289,11 @@ class _BillPageState extends State<BillPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
-                              '${_selectedMonth.year}年${_selectedMonth.month}月总消费',
+                              l10n.monthlyConsumption,
                               style: TextStyle(color: Colors.grey[700]),
                             ),
                             Text(
-                              '¥$_totalCost',
+                              '${l10n.unitCurrency}$_totalCost',
                               style: const TextStyle(
                                 fontSize: 20,
                                 color: Colors.brown,
@@ -325,9 +325,9 @@ class _BillPageState extends State<BillPage> {
                     ),
                     child: Column(
                       children: [
-                        const Text(
-                          '品牌消费占比',
-                          style: TextStyle(
+                        Text(
+                          l10n.brandConsumption,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -420,7 +420,7 @@ class _BillPageState extends State<BillPage> {
                                           100)
                                       .toStringAsFixed(1);
                                   return Text(
-                                    '${entry.key}: ¥${entry.value} (${percent}%)',
+                                    '${entry.key}: ${l10n.unitCurrency}${entry.value} (${percent}%)',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -446,9 +446,9 @@ class _BillPageState extends State<BillPage> {
                     ),
                     child: Column(
                       children: [
-                        const Text(
-                          '每日消费趋势',
-                          style: TextStyle(
+                        Text(
+                          l10n.dailyTrend,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -480,7 +480,7 @@ class _BillPageState extends State<BillPage> {
                                     reservedSize: 40,
                                     getTitlesWidget: (value, meta) {
                                       return Text(
-                                        '¥${value.toInt()}',
+                                        '${l10n.unitCurrency}${value.toInt()}',
                                         style: const TextStyle(
                                           color: Color(0xFF606060),
                                           fontSize: 10,
@@ -501,7 +501,7 @@ class _BillPageState extends State<BillPage> {
                                             top: 8.0,
                                           ),
                                           child: Text(
-                                            '${value.toInt()}日',
+                                            '${value.toInt()}${l10n.day}',
                                             style: const TextStyle(
                                               color: Color(0xFF606060),
                                               fontSize: 10,
@@ -585,7 +585,7 @@ class _BillPageState extends State<BillPage> {
                                       final day = barSpot.x.toInt();
                                       final amount = barSpot.y.toInt();
                                       return LineTooltipItem(
-                                        '$day日: ¥$amount',
+                                        '${day}${l10n.day}: ${l10n.unitCurrency}$amount',
                                         const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -645,9 +645,9 @@ class _BillPageState extends State<BillPage> {
                     ),
                     child: Column(
                       children: [
-                        const Text(
-                          '咖啡品类占比',
-                          style: TextStyle(
+                        Text(
+                          l10n.typeConsumption,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -740,7 +740,7 @@ class _BillPageState extends State<BillPage> {
                                           100)
                                       .toStringAsFixed(1);
                                   return Text(
-                                    '${entry.key}: ¥${entry.value} (${percent}%)',
+                                    '${entry.key}: ${l10n.unitCurrency}${entry.value} (${percent}%)',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -753,9 +753,12 @@ class _BillPageState extends State<BillPage> {
                   ),
 
                   // 消费记录列表
-                  const Text(
-                    '消费记录',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.consumptionRecords,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   ...List.generate(_records.length, (i) {
@@ -767,7 +770,7 @@ class _BillPageState extends State<BillPage> {
                         '${r.size} ${DateFormat('MM-dd HH:mm').format(r.createdAt)}',
                       ),
                       trailing: Text(
-                        '¥${r.price}',
+                        '${l10n.unitCurrency}${r.price}',
                         style: const TextStyle(
                           color: Colors.brown,
                           fontWeight: FontWeight.bold,
@@ -790,7 +793,7 @@ class _BillPageState extends State<BillPage> {
       );
     } else if (diff == 0) {
       return Text(
-        l10n.noLastMonthData, // 使用无变化文本
+        l10n.noChange,
         style: const TextStyle(color: Colors.grey, fontSize: 14),
       );
     } else {

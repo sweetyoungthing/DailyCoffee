@@ -111,5 +111,9 @@
   "noLastMonthData": "No data from last month",
   "brandConsumption": "Brand Consumption",
   "typeConsumption": "Type Consumption",
-  "dailyTrend": "Daily Trend"
+  "dailyTrend": "Daily Trend",
+  "noRecords": "No consumption records",
+  "day": " day",
+  "consumptionRecords": "Consumption Records",
+  "noChange": "Same as last month"
 } 
