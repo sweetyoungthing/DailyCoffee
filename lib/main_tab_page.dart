@@ -4,6 +4,7 @@ import 'calendar_page.dart';
 import 'summary_page.dart';
 import 'bill_page.dart';
 import 'my_page.dart';
+import 'discovery_page.dart';
 
 class MainTabPage extends StatefulWidget {
   const MainTabPage({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class _MainTabPageState extends State<MainTabPage> {
   final List<Widget> _pages = [
     const CalendarPage(),
     const SummaryPage(),
+    const DiscoveryPage(),
     const BillPage(),
     const MyPage(),
   ];
@@ -38,6 +40,10 @@ class _MainTabPageState extends State<MainTabPage> {
           BottomNavigationBarItem(
             icon: const Icon(Icons.bar_chart),
             label: l10n.track,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.coffee),
+            label: l10n.discovery,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.receipt_long),

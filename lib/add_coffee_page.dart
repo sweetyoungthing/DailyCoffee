@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'db/coffee_db.dart';
 import 'db/coffee_record.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'utils/coffee_display_helper.dart';
+import 'services/notification_service.dart';
 
 class AddCoffeePage extends StatefulWidget {
-  const AddCoffeePage({Key? key}) : super(key: key);
+  const AddCoffeePage({super.key});
 
   @override
   State<AddCoffeePage> createState() => _AddCoffeePageState();
@@ -21,6 +24,8 @@ class _AddCoffeePageState extends State<AddCoffeePage> {
   int sizeIndex = 1;
 
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _caffeineController = TextEditingController();
+  final _notificationService = NotificationService();
 
   int get caffeine => _calcCaffeine();
   int get price => int.tryParse(_priceController.text) ?? 0;

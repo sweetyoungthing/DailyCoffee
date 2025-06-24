@@ -6,6 +6,7 @@
   "track": "Track",
   "bills": "Bills",
   "mine": "Mine",
+  "discovery": "Discover",
   
   "settings": "Settings",
   "display": "Display",
@@ -127,5 +128,45 @@
   
   "small": "Small",
   "medium": "Medium",
-  "large": "Large"
+  "large": "Large",
+
+  "coffeeTypes": "Coffee Types",
+  "brewingMethods": "Brewing Methods",
+  "beanOrigins": "Bean Origins",
+  "detailsFor": "Details for",
+  "coffeeshopMap": "Coffee Map",
+
+  "espressoDescription": "Espresso is the essence of coffee, extracted by forcing hot water through finely-ground coffee under high pressure, creating a concentrated shot with a reddish-brown crema on top.",
+  "americanoDescription": "Americano is made by diluting espresso with hot water, maintaining the flavor profile but at a lower concentration than straight espresso.",
+  "latteDescription": "Latte consists of espresso with steamed milk, typically in a 1:3 ratio, topped with a small layer of milk foam.",
+  "cappuccinoDescription": "Cappuccino contains equal parts of espresso, steamed milk, and milk foam, creating a rich and balanced beverage.",
+  "mochaDescription": "Mocha is essentially a latte with chocolate syrup added, combining the flavors of coffee and chocolate.",
+  "macchiatoDescription": "Macchiato is an espresso 'stained' or 'marked' with a small amount of milk foam, as the Italian name suggests.",
+  
+  "pourOverDescription": "Pour over brewing involves pouring hot water over ground coffee in a filter, allowing it to drip through. This method highlights delicate flavors and aromas.",
+  "frenchPressDescription": "French press uses a plunger with a mesh filter to separate coffee grounds from the liquid, preserving oils and producing a full-bodied cup.",
+  "aeroPressDescription": "AeroPress uses air pressure to quickly extract coffee, creating a smooth brew that's close to espresso in strength but with lower acidity.",
+  "coldBrewDescription": "Cold brew is made by steeping coffee grounds in cold or room temperature water for 12-24 hours, producing a smooth, low-acid coffee concentrate.",
+  
+  "ethiopiaDescription": "Ethiopia is considered the birthplace of coffee, producing beans with floral, fruity, and citrus notes.",
+  "colombiaDescription": "Colombian coffee is known for its balanced acidity, full body, and clean caramel sweetness.",
+  "brazilDescription": "Brazil is the world's largest coffee producer, with beans typically offering nutty, chocolatey flavors with low acidity.",
+  "guatemalaDescription": "Guatemalan coffee grows in volcanic soil and typically offers complex flavors of chocolate, nuts, and fruits.",
+  "jamaicaDescription": "Jamaica Blue Mountain coffee is one of the most expensive coffees in the world, known for its mild flavor, perfect balance, and lack of bitterness.",
+  
+  "nearbyTitle": "Nearby Coffee Shops",
+  "loadingCoffeeshops": "Loading nearby coffee shops...",
+  "noCoffeeshopsFound": "No coffee shops found nearby",
+  "locationPermissionDenied": "Location permission needed to show nearby coffee shops",
+  "requestLocationPermission": "Request Location Permission",
+  "distance": "Distance",
+  "meters": "m",
+  "kilometers": "km",
+  "openNow": "Open Now",
+  "closed": "Closed",
+  "unknown": "Unknown",
+  "rating": "Rating",
+  "search": "Search",
+  "searchNearby": "Search nearby coffee shops",
+  "directions": "Get Directions"
 } 

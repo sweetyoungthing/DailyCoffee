@@ -6,9 +6,14 @@ import 'settings_page.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class MyPage extends StatelessWidget {
+class MyPage extends StatefulWidget {
   const MyPage({super.key});
 
+  @override
+  State<MyPage> createState() => _MyPageState();
+}
+
+class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -30,16 +35,62 @@ class MyPage extends StatelessWidget {
                     child: Icon(Icons.person, size: 40),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    l10n.nicknameNotSet,
-                    style: Theme.of(context).textTheme.titleLarge,
+                  FutureBuilder<String>(
+                    future: SharedPreferences.getInstance().then(
+                      (prefs) => prefs.getString('nickname') ?? '',
+                    ),
+                    builder: (context, snapshot) {
+                      final nickname = snapshot.data ?? '';
+                      return Text(
+                        nickname.isEmpty ? l10n.nicknameNotSet : nickname,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      );
+                    },
                   ),
                   TextButton(
-                    onPressed: () {
-                      // TODO: 实现头像选择功能
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.avatarNotImplemented)),
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      final currentNickname = prefs.getString('nickname') ?? '';
+
+                      final controller = TextEditingController(
+                        text: currentNickname,
                       );
+                      final result = await showDialog<String>(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              title: Text(l10n.nickname),
+                              content: TextField(
+                                controller: controller,
+                                decoration: InputDecoration(
+                                  hintText: l10n.enterNickname,
+                                ),
+                                autofocus: true,
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(l10n.cancel),
+                                ),
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.pop(
+                                        context,
+                                        controller.text,
+                                      ),
+                                  child: Text(l10n.save),
+                                ),
+                              ],
+                            ),
+                      );
+
+                      if (result != null) {
+                        await prefs.setString('nickname', result.trim());
+                        // 强制重建页面以更新昵称显示
+                        if (context.mounted) {
+                          setState(() {});
+                        }
+                      }
                     },
                     child: Text(l10n.edit),
                   ),

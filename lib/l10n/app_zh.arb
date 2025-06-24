@@ -6,6 +6,7 @@
   "track": "追踪",
   "bills": "账单",
   "mine": "我的",
+  "discovery": "发现",
   
   "settings": "设置",
   "display": "显示",
@@ -127,5 +128,45 @@
   
   "small": "小杯",
   "medium": "中杯",
-  "large": "大杯"
+  "large": "大杯",
+
+  "coffeeTypes": "咖啡种类",
+  "brewingMethods": "冲泡方法",
+  "beanOrigins": "咖啡产地",
+  "detailsFor": "详情：",
+  "coffeeshopMap": "咖啡地图",
+
+  "espressoDescription": "浓缩咖啡是咖啡的精华，由高压热水通过细磨咖啡粉萃取而成，形成上层有红褐色泡沫（crema）的浓缩液体。",
+  "americanoDescription": "美式咖啡是浓缩咖啡加水稀释而成，保留了浓缩咖啡的风味但浓度较低。",
+  "latteDescription": "拿铁是由浓缩咖啡和蒸热牛奶组成，通常牛奶量是咖啡的三倍，顶部有薄层奶泡。",
+  "cappuccinoDescription": "卡布奇诺由相等比例的浓缩咖啡、蒸汽热牛奶和奶泡组成，口感丰富且均衡。",
+  "mochaDescription": "摩卡是在拿铁的基础上添加了巧克力糖浆，结合了咖啡和巧克力的香甜风味。",
+  "macchiatoDescription": "玛奇朵是在浓缩咖啡上加少量奶泡的饮品，'macchiato'意大利语意为'点缀'。",
+  
+  "pourOverDescription": "手冲咖啡是将热水缓慢倒在咖啡粉上，通过滤纸过滤的冲泡方法，可以突出咖啡的细腻风味和香气。",
+  "frenchPressDescription": "法压壶使用粗磨咖啡粉，用滤网分离咖啡粉和液体，保留了更多咖啡油脂，口感丰富。",
+  "aeroPressDescription": "爱乐压是一种使用气压快速萃取咖啡的工具，操作简单，可制作接近浓缩咖啡的口感。",
+  "coldBrewDescription": "冷萃咖啡是用冷水或室温水浸泡咖啡粉12-24小时，萃取出低酸度、香甜顺滑的咖啡。",
+  
+  "ethiopiaDescription": "埃塞俄比亚被认为是咖啡的发源地，其咖啡通常带有花香、水果和柑橘的风味。",
+  "colombiaDescription": "哥伦比亚咖啡以其平衡的酸度、醇厚的口感和清晰的焦糖香气而闻名。",
+  "brazilDescription": "巴西是世界最大的咖啡生产国，其咖啡通常带有坚果和巧克力风味，酸度较低。",
+  "guatemalaDescription": "危地马拉咖啡产自火山土壤，通常带有巧克力、坚果和水果的复杂风味。",
+  "jamaicaDescription": "牙买加蓝山咖啡是世界上最昂贵的咖啡之一，以其柔和、平衡的风味和极低的苦味著称。",
+  
+  "nearbyTitle": "附近的咖啡店",
+  "loadingCoffeeshops": "正在加载附近的咖啡店...",
+  "noCoffeeshopsFound": "未找到附近的咖啡店",
+  "locationPermissionDenied": "需要位置权限才能显示附近的咖啡店",
+  "requestLocationPermission": "请求位置权限",
+  "distance": "距离",
+  "meters": "米",
+  "kilometers": "公里",
+  "openNow": "营业中",
+  "closed": "已关闭",
+  "unknown": "未知",
+  "rating": "评分",
+  "search": "搜索",
+  "searchNearby": "搜索附近咖啡店",
+  "directions": "导航到这里"
 } 

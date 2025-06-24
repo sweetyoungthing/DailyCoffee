@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'services/notification_service.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
@@ -16,11 +17,18 @@ class _NotificationPageState extends State<NotificationPage> {
   bool _caffeineAlert = false;
   bool _budgetAlert = false;
   TimeOfDay _reminderTime = const TimeOfDay(hour: 20, minute: 0);
+  final _notificationService = NotificationService();
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
+    _initNotifications();
+  }
+
+  Future<void> _initNotifications() async {
+    await _notificationService.init();
+    await _notificationService.requestPermissions();
   }
 
   Future<void> _loadSettings() async {
@@ -47,6 +55,23 @@ class _NotificationPageState extends State<NotificationPage> {
     await prefs.setBool('budgetAlert', _budgetAlert);
     await prefs.setInt('reminderTimeHour', _reminderTime.hour);
     await prefs.setInt('reminderTimeMinute', _reminderTime.minute);
+
+    // 更新通知设置
+    if (!_enableNotifications) {
+      await _notificationService.cancelAllNotifications();
+    } else {
+      if (_dailyReminder) {
+        await _notificationService.scheduleDailyReminder(_reminderTime);
+      } else {
+        await _notificationService.cancelNotification(1);
+      }
+
+      if (_weeklyReport) {
+        await _notificationService.scheduleWeeklyReport();
+      } else {
+        await _notificationService.cancelNotification(2);
+      }
+    }
   }
 
   @override
@@ -88,6 +113,7 @@ class _NotificationPageState extends State<NotificationPage> {
                       setState(() {
                         _dailyReminder = value;
                       });
+                      _saveSettings();
                     }
                     : null,
           ),
@@ -120,6 +146,7 @@ class _NotificationPageState extends State<NotificationPage> {
                       setState(() {
                         _weeklyReport = value;
                       });
+                      _saveSettings();
                     }
                     : null,
           ),
@@ -135,6 +162,7 @@ class _NotificationPageState extends State<NotificationPage> {
                       setState(() {
                         _caffeineAlert = value;
                       });
+                      _saveSettings();
                     }
                     : null,
           ),
@@ -150,6 +178,7 @@ class _NotificationPageState extends State<NotificationPage> {
                       setState(() {
                         _budgetAlert = value;
                       });
+                      _saveSettings();
                     }
                     : null,
           ),
