@@ -46,11 +46,10 @@ dependencies:
   table_calendar: ^3.0.9
   fl_chart: ^0.64.0
   # 地图相关依赖
-  google_maps_flutter: ^2.5.3
-  location: ^5.0.3
   geolocator: ^10.1.0
   http: ^1.1.2
   url_launcher: ^6.2.4
+  permission_handler: ^11.1.0
 
 dev_dependencies:
   flutter_test:

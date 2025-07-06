@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'services/map_service.dart';
 import 'dart:async';
@@ -313,29 +312,24 @@ class _DiscoveryPageState extends State<DiscoveryPage>
   }
 
   Widget _buildCoffeeshopMapTab(BuildContext context, AppLocalizations l10n) {
-    return CoffeeshopMapView(l10n: l10n);
+    return CoffeeshopListView(l10n: l10n);
   }
 }
 
-class CoffeeshopMapView extends StatefulWidget {
+class CoffeeshopListView extends StatefulWidget {
   final AppLocalizations l10n;
 
-  const CoffeeshopMapView({Key? key, required this.l10n}) : super(key: key);
+  const CoffeeshopListView({Key? key, required this.l10n}) : super(key: key);
 
   @override
-  State<CoffeeshopMapView> createState() => _CoffeeshopMapViewState();
+  State<CoffeeshopListView> createState() => _CoffeeshopListViewState();
 }
 
-class _CoffeeshopMapViewState extends State<CoffeeshopMapView> {
-  GoogleMapController? _controller;
-  final Set<Marker> _markers = {};
+class _CoffeeshopListViewState extends State<CoffeeshopListView> {
   bool _isLoading = true;
   bool _hasLocationPermission = false;
   List<CoffeeShop> _coffeeShops = [];
-  CameraPosition _initialCameraPosition = const CameraPosition(
-    target: LatLng(22.5431, 114.0579), // 深圳位置作为默认位置
-    zoom: 13,
-  );
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -343,58 +337,52 @@ class _CoffeeshopMapViewState extends State<CoffeeshopMapView> {
     _checkPermissionAndLoadData();
   }
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   Future<void> _checkPermissionAndLoadData() async {
-    final hasPermission = await MapService.checkLocationPermission();
+    try {
+      // 初始化
+      await MapService.init();
 
-    setState(() {
-      _hasLocationPermission = hasPermission;
-      _isLoading = hasPermission; // 只有当有权限时才显示加载中
-    });
+      final hasPermission = await MapService.checkLocationPermission();
 
-    if (hasPermission) {
-      _loadCoffeeShops();
-      _updateCurrentLocation();
-    }
-  }
-
-  Future<void> _loadCoffeeShops() async {
-    final shops = await MapService.getNearbyShops();
-
-    // 一系列咖啡店标记
-    Set<Marker> markers = {};
-    for (var shop in shops) {
-      markers.add(
-        Marker(
-          markerId: MarkerId(shop.id),
-          position: LatLng(shop.lat, shop.lng),
-          infoWindow: InfoWindow(title: shop.name, snippet: shop.vicinity),
-          onTap: () {
-            _showShopDetails(shop);
-          },
-        ),
-      );
-    }
-
-    setState(() {
-      _coffeeShops = shops;
-      _markers.addAll(markers);
-      _isLoading = false;
-    });
-  }
-
-  Future<void> _updateCurrentLocation() async {
-    final position = await MapService.getCurrentLocation();
-    if (position != null && mounted) {
       setState(() {
-        _initialCameraPosition = CameraPosition(
-          target: LatLng(position.latitude, position.longitude),
-          zoom: 14,
-        );
+        _hasLocationPermission = hasPermission;
+        _isLoading = true;
       });
 
-      _controller?.animateCamera(
-        CameraUpdate.newCameraPosition(_initialCameraPosition),
-      );
+      if (hasPermission) {
+        _loadCoffeeShops();
+      }
+    } catch (e) {
+      print('初始化失败: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadCoffeeShops({String keyword = '咖啡'}) async {
+    try {
+      final shops = await MapService.getNearbyShops(keyword: keyword);
+
+      if (mounted) {
+        setState(() {
+          _coffeeShops = shops;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('加载咖啡店失败: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -416,13 +404,20 @@ class _CoffeeshopMapViewState extends State<CoffeeshopMapView> {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(shop.vicinity),
+              if (shop.address != null) Text(shop.address!),
+              if (shop.vicinity.isNotEmpty && shop.address == null)
+                Text(shop.vicinity),
               const SizedBox(height: 12),
-              if (shop.rating != null)
+              if (shop.tel != null && shop.tel!.isNotEmpty)
                 Row(
                   children: [
-                    Icon(Icons.star, color: Colors.amber, size: 18),
-                    Text(' ${shop.rating} (${shop.userRatingsTotal ?? 0})'),
+                    const Icon(Icons.phone, color: Colors.blue, size: 18),
+                    TextButton(
+                      onPressed: () {
+                        _launchPhoneCall(shop.tel!);
+                      },
+                      child: Text(shop.tel!),
+                    ),
                   ],
                 ),
               const SizedBox(height: 8),
@@ -430,30 +425,10 @@ class _CoffeeshopMapViewState extends State<CoffeeshopMapView> {
                 Text(
                   '${widget.l10n.distance}: ${_formatDistance(shop.distance!)}',
                 ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(
-                    shop.openNow == true
-                        ? Icons.check_circle
-                        : Icons.access_time,
-                    color: shop.openNow == true ? Colors.green : Colors.orange,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    shop.openNow == true
-                        ? widget.l10n.openNow
-                        : (shop.openNow == false
-                            ? widget.l10n.closed
-                            : widget.l10n.unknown),
-                  ),
-                ],
-              ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
                 onPressed: () {
-                  _launchMapsUrl(shop.lat, shop.lng);
+                  _launchNavigationApp(shop);
                 },
                 icon: const Icon(Icons.directions),
                 label: Text(widget.l10n.directions),
@@ -477,9 +452,27 @@ class _CoffeeshopMapViewState extends State<CoffeeshopMapView> {
     }
   }
 
-  Future<void> _launchMapsUrl(double lat, double lng) async {
-    final url = MapService.getDirectionsUrl(lat, lng);
-    final uri = Uri.parse(url);
+  Future<void> _launchNavigationApp(CoffeeShop shop) async {
+    try {
+      final mapUrl = MapService.getDirectionsUrl(shop.lat, shop.lng, shop.name);
+      if (await canLaunchUrl(Uri.parse(mapUrl))) {
+        await launchUrl(Uri.parse(mapUrl));
+      } else {
+        // 如果无法打开高德地图，则尝试打开网页导航
+        final webUrl =
+            'https://uri.amap.com/navigation?to=${shop.lng},${shop.lat},${shop.name}&mode=car&policy=1&src=mypage&coordinate=gaode&callnative=0';
+        await launchUrl(
+          Uri.parse(webUrl),
+          mode: LaunchMode.externalApplication,
+        );
+      }
+    } catch (e) {
+      print('启动导航失败: $e');
+    }
+  }
+
+  Future<void> _launchPhoneCall(String phoneNumber) async {
+    final uri = Uri(scheme: 'tel', path: phoneNumber);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     }
@@ -509,81 +502,112 @@ class _CoffeeshopMapViewState extends State<CoffeeshopMapView> {
       );
     }
 
-    return Stack(
+    return Column(
       children: [
-        GoogleMap(
-          initialCameraPosition: _initialCameraPosition,
-          markers: _markers,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: true,
-          onMapCreated: (controller) {
-            _controller = controller;
-          },
-        ),
-        if (_isLoading)
-          Container(
-            color: Colors.white.withOpacity(0.7),
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const CircularProgressIndicator(color: Colors.brown),
-                  const SizedBox(height: 16),
-                  Text(widget.l10n.loadingCoffeeshops),
-                ],
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: widget.l10n.searchNearby,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  _searchController.clear();
+                  _loadCoffeeShops();
+                },
               ),
             ),
+            onSubmitted: (value) {
+              if (value.isNotEmpty) {
+                setState(() {
+                  _isLoading = true;
+                });
+                _loadCoffeeShops(keyword: value);
+              }
+            },
           ),
-        Positioned(
-          bottom: 16,
-          left: 16,
-          right: 16,
-          child: Card(
-            elevation: 4,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              height: 120,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.l10n.nearbyTitle,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+        ),
+        Expanded(
+          child:
+              _isLoading
+                  ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const CircularProgressIndicator(color: Colors.brown),
+                        const SizedBox(height: 16),
+                        Text(widget.l10n.loadingCoffeeshops),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _isLoading
-                        ? widget.l10n.loadingCoffeeshops
-                        : _coffeeShops.isEmpty
-                        ? widget.l10n.noCoffeeshopsFound
-                        : '${_coffeeShops.length} ${widget.l10n.coffeeTypes}',
-                    style: TextStyle(color: Colors.grey[700]),
-                  ),
-                  const Spacer(),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: widget.l10n.searchNearby,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                      isDense: true,
+                  )
+                  : _coffeeShops.isEmpty
+                  ? Center(
+                    child: Text(
+                      widget.l10n.noCoffeeshopsFound,
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                     ),
-                    onSubmitted: (value) {
-                      // 实现搜索功能
+                  )
+                  : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: _coffeeShops.length,
+                    itemBuilder: (context, index) {
+                      final shop = _coffeeShops[index];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16),
+                          leading: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.brown[100],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.local_cafe,
+                              color: Colors.brown,
+                              size: 30,
+                            ),
+                          ),
+                          title: Text(
+                            shop.name,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 4),
+                              Text(shop.vicinity),
+                              const SizedBox(height: 4),
+                              if (shop.distance != null)
+                                Text(
+                                  _formatDistance(shop.distance!),
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 12,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.directions),
+                            color: Colors.blue,
+                            onPressed: () {
+                              _launchNavigationApp(shop);
+                            },
+                          ),
+                          onTap: () {
+                            _showShopDetails(shop);
+                          },
+                        ),
+                      );
                     },
                   ),
-                ],
-              ),
-            ),
-          ),
         ),
       ],
     );
