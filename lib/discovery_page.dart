@@ -344,25 +344,60 @@ class _CoffeeshopListViewState extends State<CoffeeshopListView> {
   }
 
   Future<void> _checkPermissionAndLoadData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       // 初始化
       await MapService.init();
+      print('MapService初始化成功');
 
       final hasPermission = await MapService.checkLocationPermission();
+      print('位置权限检查结果: $hasPermission');
 
       setState(() {
         _hasLocationPermission = hasPermission;
-        _isLoading = true;
       });
 
       if (hasPermission) {
-        _loadCoffeeShops();
+        await _loadCoffeeShops();
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        // 显示权限被拒绝的提示
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('无法获取位置权限，请在系统设置中授权'),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
       }
     } catch (e) {
       print('初始化失败: $e');
+      // 记录详细错误信息
+      if (e is Exception) {
+        print('错误详情: ${e.toString()}');
+      }
+
       setState(() {
         _isLoading = false;
       });
+
+      // 向用户显示错误提示
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('初始化地图服务失败: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 
@@ -454,20 +489,49 @@ class _CoffeeshopListViewState extends State<CoffeeshopListView> {
 
   Future<void> _launchNavigationApp(CoffeeShop shop) async {
     try {
+      // 先检查高德地图是否已安装
+      final isMapAppInstalled = await MapService.isAMapInstalled();
+
       final mapUrl = MapService.getDirectionsUrl(shop.lat, shop.lng, shop.name);
-      if (await canLaunchUrl(Uri.parse(mapUrl))) {
+
+      if (isMapAppInstalled && await canLaunchUrl(Uri.parse(mapUrl))) {
+        // 如果已安装高德地图，直接打开
         await launchUrl(Uri.parse(mapUrl));
       } else {
-        // 如果无法打开高德地图，则尝试打开网页导航
-        final webUrl =
-            'https://uri.amap.com/navigation?to=${shop.lng},${shop.lat},${shop.name}&mode=car&policy=1&src=mypage&coordinate=gaode&callnative=0';
-        await launchUrl(
-          Uri.parse(webUrl),
-          mode: LaunchMode.externalApplication,
+        // 如果未安装或无法打开，使用网页版导航
+        final webUrl = MapService.getWebDirectionsUrl(
+          shop.lat,
+          shop.lng,
+          shop.name,
         );
+
+        if (await canLaunchUrl(Uri.parse(webUrl))) {
+          await launchUrl(
+            Uri.parse(webUrl),
+            mode: LaunchMode.externalApplication,
+          );
+        } else {
+          // 如果连网页版都无法打开，显示错误提示
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(widget.l10n.unableToOpenMap),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
       }
     } catch (e) {
       print('启动导航失败: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${widget.l10n.navigationError}: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

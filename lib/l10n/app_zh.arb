@@ -168,5 +168,7 @@
   "rating": "评分",
   "search": "搜索",
   "searchNearby": "搜索附近咖啡店",
-  "directions": "导航到这里"
+  "directions": "导航到这里",
+  "unableToOpenMap": "无法打开地图应用",
+  "navigationError": "导航错误"
 } 

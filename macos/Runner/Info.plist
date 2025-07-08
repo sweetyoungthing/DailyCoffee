@@ -28,5 +28,12 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSLocationUsageDescription</key>
+	<string>需要定位权限来显示您附近的咖啡店</string>
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+		<key>FindCoffeeshops</key>
+		<string>需要定位权限来显示您附近的咖啡店</string>
+	</dict>
 </dict>
 </plist>

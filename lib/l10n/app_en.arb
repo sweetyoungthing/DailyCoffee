@@ -168,5 +168,7 @@
   "rating": "Rating",
   "search": "Search",
   "searchNearby": "Search nearby coffee shops",
-  "directions": "Get Directions"
+  "directions": "Get Directions",
+  "unableToOpenMap": "Unable to open map application",
+  "navigationError": "Navigation error"
 } 

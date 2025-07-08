@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 
 class CoffeeShop {
@@ -31,22 +33,78 @@ class CoffeeShop {
 
   // 从高德POI数据创建咖啡店对象
   factory CoffeeShop.fromJson(Map<String, dynamic> json) {
-    return CoffeeShop(
-      id: json['id'] ?? "",
-      name: json['name'] ?? "",
-      vicinity: json['address'] ?? "",
-      lat: double.tryParse(json['location']?.split(',')[1] ?? "0") ?? 0,
-      lng: double.tryParse(json['location']?.split(',')[0] ?? "0") ?? 0,
-      distance:
-          json['distance'] != null ? int.tryParse(json['distance']) : null,
-      tel: json['tel'],
-      address: json['address'],
-    );
+    try {
+      // 安全地提取location字段
+      String locationStr = '';
+      double lat = 0.0;
+      double lng = 0.0;
+
+      if (json['location'] != null) {
+        locationStr = json['location'].toString();
+        final locationParts = locationStr.split(',');
+        if (locationParts.length == 2) {
+          lng = double.tryParse(locationParts[0].trim()) ?? 0;
+          lat = double.tryParse(locationParts[1].trim()) ?? 0;
+        } else {
+          print('位置数据格式错误: $locationStr');
+        }
+      }
+
+      // 提取距离
+      int? distance;
+      if (json['distance'] != null) {
+        // 处理可能是字符串或数字的情况
+        if (json['distance'] is String) {
+          distance = int.tryParse(json['distance'] as String);
+        } else if (json['distance'] is int) {
+          distance = json['distance'] as int;
+        } else if (json['distance'] is double) {
+          distance = (json['distance'] as double).round();
+        }
+      }
+
+      // 提取电话
+      String? tel;
+      if (json['tel'] != null) {
+        // 处理可能是字符串或列表的情况
+        if (json['tel'] is String) {
+          tel = json['tel'] as String;
+        } else if (json['tel'] is List && (json['tel'] as List).isNotEmpty) {
+          tel = (json['tel'] as List).first.toString();
+        }
+      }
+
+      return CoffeeShop(
+        id: json['id']?.toString() ?? "",
+        name: json['name']?.toString() ?? "未命名咖啡店",
+        vicinity: json['address']?.toString() ?? "无地址信息",
+        lat: lat,
+        lng: lng,
+        distance: distance,
+        tel: tel,
+        address: json['address']?.toString(),
+        rating:
+            json['rating'] != null
+                ? double.tryParse(json['rating'].toString())
+                : null,
+      );
+    } catch (e) {
+      print('解析咖啡店数据时出错: $e, 原始数据: $json');
+      // 返回一个默认的对象，避免抛出异常
+      return CoffeeShop(
+        id: "error",
+        name: "解析错误",
+        vicinity: "无地址信息",
+        lat: 0,
+        lng: 0,
+      );
+    }
   }
 }
 
 class MapService {
-  static const String _webApiKey = ''; // 需要添加实际的高德地图 Web服务 Key
+  // 替换成你的高德地图Web服务API密钥
+  static const String _webApiKey = '560792430a6d46fd93b5a92d8d239c72';
 
   static bool _isInitialized = false;
 
@@ -63,9 +121,37 @@ class MapService {
       await init();
     }
 
-    // 检查定位权限
-    var status = await Permission.location.request();
-    return status.isGranted;
+    // 根据平台不同使用不同的权限检查方法
+    if (Platform.isIOS || Platform.isAndroid) {
+      // 在iOS和Android上使用permission_handler
+      var status = await Permission.location.request();
+      return status.isGranted;
+    } else if (Platform.isMacOS) {
+      // 在macOS上直接使用Geolocator的权限API
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        // 位置服务未启用，尝试打开
+        return false;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return false;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        return false;
+      }
+
+      return permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse;
+    } else {
+      // 其他平台暂不支持
+      return false;
+    }
   }
 
   // 获取当前位置
@@ -93,6 +179,12 @@ class MapService {
     try {
       final position = await getCurrentLocation();
       if (position == null) {
+        print('无法获取当前位置');
+        return [];
+      }
+
+      if (_webApiKey.isEmpty || _webApiKey == '替换为您的高德地图Web服务API密钥') {
+        print('警告：未配置高德地图API密钥，无法获取咖啡店数据');
         return [];
       }
 
@@ -109,13 +201,38 @@ class MapService {
         '&extensions=all',
       );
 
+      print('请求URL: $url');
       final response = await http.get(url);
       if (response.statusCode == 200) {
+        print('API响应: ${response.body}');
         final data = json.decode(response.body);
-        if (data['status'] == '1' && data['pois'] != null) {
-          final List pois = data['pois'];
-          return pois.map((poi) => CoffeeShop.fromJson(poi)).toList();
+
+        if (data['status'] == '1') {
+          if (data['pois'] != null && data['pois'] is List) {
+            final List pois = data['pois'];
+
+            // 调试输出第一个POI的结构
+            if (pois.isNotEmpty) {
+              print('第一个POI数据结构: ${pois.first}');
+            }
+
+            final List<CoffeeShop> shops = [];
+            for (var poi in pois) {
+              try {
+                shops.add(CoffeeShop.fromJson(poi));
+              } catch (e) {
+                print('解析POI数据错误: $e, 数据: $poi');
+              }
+            }
+            return shops;
+          } else {
+            print('API未返回POI数据或格式错误: ${data['pois']}');
+          }
+        } else {
+          print('API请求失败，状态码: ${data['status']}, 错误信息: ${data['info']}');
         }
+      } else {
+        print('HTTP请求失败，状态码: ${response.statusCode}');
       }
 
       return [];
@@ -125,14 +242,31 @@ class MapService {
     }
   }
 
-  // 获取导航URL (高德地图)
+  // 获取导航URL，根据平台返回不同的导航URL
   static String getDirectionsUrl(
     double destLat,
     double destLng,
     String destName,
   ) {
-    // 高德地图 URL Scheme
-    return 'androidamap://route?sourceApplication=daily_coffee&dlat=$destLat&dlon=$destLng&dname=$destName&dev=0&t=0';
+    // 根据平台返回不同的导航URL
+    if (Platform.isIOS) {
+      return getIOSDirectionsUrl(destLat, destLng, destName);
+    } else if (Platform.isAndroid) {
+      return getAndroidDirectionsUrl(destLat, destLng, destName);
+    } else {
+      // 如果是其他平台，返回Web导航URL
+      return getWebDirectionsUrl(destLat, destLng, destName);
+    }
+  }
+
+  // 获取Android导航URL (高德地图)
+  static String getAndroidDirectionsUrl(
+    double destLat,
+    double destLng,
+    String destName,
+  ) {
+    // Android高德地图URL Scheme
+    return 'androidamap://route?sourceApplication=daily_coffee&dlat=$destLat&dlon=$destLng&dname=${Uri.encodeComponent(destName)}&dev=0&t=0';
   }
 
   // 获取iOS导航URL (高德地图)
@@ -146,9 +280,32 @@ class MapService {
     return 'iosamap://route?sourceApplication=daily_coffee&dlat=$destLat&dlon=$destLng&dname=$encodedName&dev=0&t=0';
   }
 
+  // 获取Web导航URL (高德地图)
+  static String getWebDirectionsUrl(
+    double destLat,
+    double destLng,
+    String destName,
+  ) {
+    // 网页版高德地图导航链接
+    return 'https://uri.amap.com/navigation?to=$destLng,$destLat,${Uri.encodeComponent(destName)}&mode=car&policy=1&src=myapp&coordinate=gaode&callnative=0';
+  }
+
   // 检查是否安装了高德地图应用
   static Future<bool> isAMapInstalled() async {
-    // 这里仅为占位，实际实现需要使用 url_launcher 的 canLaunchUrl 方法
-    return true;
+    String urlScheme;
+    if (Platform.isIOS) {
+      urlScheme = 'iosamap://';
+    } else if (Platform.isAndroid) {
+      urlScheme = 'androidamap://';
+    } else {
+      return false;
+    }
+
+    try {
+      return await canLaunchUrl(Uri.parse(urlScheme));
+    } catch (e) {
+      print('检查高德地图安装失败: $e');
+      return false;
+    }
   }
 }
